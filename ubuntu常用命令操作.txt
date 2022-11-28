@@ -1,0 +1,137 @@
+
+设置支持I386架构
+sudo dpkg --add-architecture i386 
+
+添加仓库密码
+wget -nc https://dl.winehq.org/wine-builds/winehq.key 
+sudo mv winehq.key /usr/share/keyrings/winehq-archive.key
+
+
+添加仓库源--阿里源 sudo /etc/apt/source.list 添加下面代码保存(需要用到root 如果不知道密码需要先改 sudo passwd root)
+deb http://mirrors.aliyun.com/ubuntu/ jammy main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ jammy main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ jammy-security main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ jammy-security main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ jammy-updates main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ jammy-updates main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ jammy-proposed main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ jammy-proposed main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ jammy-backports main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ jammy-backports main restricted universe multiverse
+
+# Ubuntu 20.04 LTS
+deb https://mirrors.tuna.tsinghua.edu.cn/mysql/apt/ubuntu focal mysql-5.7 mysql-8.0 mysql-tools
+
+# Ubuntu 18.04 LTS
+deb https://mirrors.tuna.tsinghua.edu.cn/mysql/apt/ubuntu bionic mysql-5.7 mysql-8.0 mysql-tools
+
+# Ubuntu 16.04 LTS
+deb https://mirrors.tuna.tsinghua.edu.cn/mysql/apt/ubuntu xenial mysql-5.6 mysql-5.7 mysql-8.0 mysql-tools
+
+# Ubuntu 14.04 LTS
+deb https://mirrors.tuna.tsinghua.edu.cn/mysql/apt/ubuntu trusty mysql-5.6 mysql-5.7 mysql-8.0 mysql-tools
+
+
+sudo apt update---更新应用
+安装winetricks
+sudo apt install winetricks
+sudo dpkg -i *.deb 安装应用
+
+
+
+
+
+
+卸载wine
+
+sudo apt-get remove --purge wine 
+
+ rm -r ~/.wine 
+
+ sudo apt-get autoremove 
+
+安装mysql
+sudo apt install mysql-server
+开机自启
+systemctl status mysql.service
+
+查看原始账号和密码
+sudo vim /etc/mysql/debian.cnf  NAJN13XLT5YyxeXg
+
+注意用户名和密码 不是root 需要用默认的用户名和密码
+
+设置密码
+
+update mysql.user set password=PASSWORD('root123') where user='root';
+update MySql.user set authentication_string=PASSWORD('root') where user='root';
+update user set plugin="mysql_native_password";
+ALTER USER 'root'@'localhost' IDENTIFIED BY '123456';
+这种方案不行
+进入mysql
+sudo mysql -uroot
+alter user 'root'@'localhost' identified with mysql_native_password by 'root123';
+
+重启数据库
+/etc/init.d/mysql restart
+
+mysql下卸载
+
+
+查看依赖
+dpkg --list|grep mysql
+
+sudo apt-get remove mysql-common
+
+sudo apt autoremove --purge mysql-server
+ 清除
+dpkg -l|grep ^rc|awk '{print $2}'|sudo xargs dpkg -P
+
+dpkg --list|grep mysql
+
+sudo apt autoremove --purge mysql-apt-config
+
+
+方案二
+
+sudo rm /var/lib/mysql/ -R
+sudo rm /etc/mysql/ -R
+sudo apt-get autoremove mysql* --purge
+sudo apt-get remove apparmor
+
+
+
+更换jdbc 
+url
+
+
+
+
+
+
+
+关闭防火墙
+sudo ufw disable
+查看防火墙状态
+sudo ufw status
+
+查看telnet状态
+netstat -a | grep telnet
+下载
+apt-get install openbsd-inetd 
+
+
+安装jdk
+
+sudo apt install software-properties-common
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+
+sudo apt-get install oracle-java8-installer
+
+--没有开放端口导致连不上 虚拟机 更防火墙没有关系
+--安装firewalld
+sudo apt-get install firewalld
+
+firewall-cmd --zone=public --add-port=11301/tcp --permanent
+
+sudo firewall-cmd --add-port=11301/tcp
